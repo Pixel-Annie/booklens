@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BookLens — KDP Market Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --paper: #f5f0e8;
+    --cream: #ede7d9;
+    --accent: #c8471a;
+    --accent2: #2d6a4f;
+    --gold: #c9a84c;
+    --muted: #7a7166;
+    --border: #d4ccc0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    background: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .header-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 80px 48px 64px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .hero-eyebrow::before,
+  .hero-eyebrow::after {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto 48px;
+    font-weight: 300;
+  }
+
+  /* INPUT AREA */
+  .input-section {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+  }
+
+  .input-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.06);
+  }
+
+  .input-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .url-input {
+    flex: 1;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    padding: 14px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    border-radius: 3px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .url-input:focus {
+    border-color: var(--ink);
+  }
+
+  .url-input::placeholder {
+    color: var(--muted);
+    opacity: 0.6;
+  }
+
+  .analyze-btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 14px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .analyze-btn:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .analyze-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .input-hint {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .hint-tag {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .hint-tag::before {
+    content: '✓';
+    color: var(--accent2);
+    font-size: 11px;
+  }
+
+  /* LOADING */
+  .loading-state {
+    display: none;
+    padding: 48px;
+    text-align: center;
+  }
+
+  .loading-state.active { display: block; }
+
+  .loading-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 360px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    transition: all 0.3s;
+  }
+
+  .step.active {
+    color: var(--ink);
+    border-color: var(--border);
+    background: white;
+  }
+
+  .step.done {
+    color: var(--accent2);
+  }
+
+  .step-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--ink);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* RESULTS */
+  .results-section {
+    display: none;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+  }
+
+  .results-section.active { display: block; }
+
+  .results-header {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .book-meta h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .book-meta-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .tag.accent { background: var(--accent); color: white; border-color: var(--accent); }
+  .tag.green { background: var(--accent2); color: white; border-color: var(--accent2); }
+
+  .score-badge {
+    flex-shrink: 0;
+    width: 96px;
+    height: 96px;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-top: 4px;
+  }
+
+  /* REPORT GRID */
+  .report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .report-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .report-card.full-width {
+    grid-column: 1 / -1;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-eyebrow-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+
+  .icon-reader { background: #fdf0e8; }
+  .icon-opportunity { background: #e8f4f0; }
+  .icon-revenue { background: #fef9e8; }
+  .icon-gap { background: #f0e8f4; }
+  .icon-signals { background: #e8eef4; }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .card-body {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #3a3530;
+  }
+
+  .insight-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .insight-item {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #3a3530;
+  }
+
+  .insight-bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+
+  .insight-bullet.green { background: var(--accent2); }
+  .insight-bullet.gold { background: var(--gold); }
+
+  /* Revenue meter */
+  .revenue-display {
+    margin-bottom: 20px;
+  }
+
+  .revenue-range {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .revenue-period {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .revenue-bar {
+    height: 6px;
+    background: var(--cream);
+    border-radius: 3px;
+    margin-top: 16px;
+    overflow: hidden;
+  }
+
+  .revenue-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--gold));
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  .revenue-breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .rev-item {
+    padding: 12px;
+    background: var(--paper);
+    border-radius: 3px;
+  }
+
+  .rev-item-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+
+  .rev-item-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  /* Signals grid */
+  .signals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .signal-box {
+    padding: 14px;
+    border-radius: 3px;
+    border-left: 3px solid transparent;
+  }
+
+  .signal-box.pos { background: #f0f9f4; border-color: var(--accent2); }
+  .signal-box.neg { background: #fdf3f0; border-color: var(--accent); }
+
+  .signal-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+
+  .signal-text {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* CTA */
+  .cta-section {
+    margin-top: 32px;
+    padding: 32px;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .cta-text h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .cta-text p {
+    font-size: 14px;
+    opacity: 0.6;
+    font-weight: 300;
+  }
+
+  .cta-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 3px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .cta-btn:hover { background: #a8360f; }
+
+  /* ERROR */
+  .error-state {
+    display: none;
+    padding: 32px;
+    background: #fdf3f0;
+    border: 1px solid #f0c8bc;
+    border-radius: 4px;
+    margin-top: 16px;
+  }
+
+  .error-state.active { display: block; }
+
+  .error-state p {
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  /* Divider ornament */
+  .ornament {
+    text-align: center;
+    color: var(--border);
+    margin: 48px 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    letter-spacing: 8px;
+  }
+
+  /* HOW IT WORKS */
+  .how-section {
+    border-top: 1px solid var(--border);
+    padding: 64px 48px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .how-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .how-item {}
+
+  .how-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .how-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+
+  .how-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 640px) {
+    header { padding: 0 20px; }
+    .hero, .input-section, .results-section, .how-section { padding-left: 20px; padding-right: 20px; }
+    .hero h1 { font-size: 36px; }
+    .report-grid { grid-template-columns: 1fr; }
+    .signals-grid { grid-template-columns: 1fr; }
+    .how-grid { grid-template-columns: 1fr; }
+    .input-row { flex-direction: column; }
+    .cta-section { flex-direction: column; }
+    .results-header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-dot"></span>
+    BookLens
+  </div>
+  <div class="header-tag">KDP Intelligence</div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Market Intelligence for Authors</div>
+  <h1>Know your market.<br><em>Before</em> you write.</h1>
+  <p class="hero-sub">
+    Paste any Amazon or Goodreads book URL. BookLens analyzes reader demand,
+    surfaces market gaps, and estimates revenue potential for your next title.
+  </p>
+</section>
+
+<section class="input-section">
+  <div class="input-card">
+    <label class="input-label">Book URL to analyze</label>
+    <div class="input-row">
+      <input
+        type="text"
+        class="url-input"
+        id="urlInput"
+        placeholder="https://www.amazon.com/dp/B0D9CBR7K4 or goodreads.com/book/show/..."
+      />
+      <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()">
+        <span id="btnText">Analyze</span>
+        <span>→</span>
+      </button>
+    </div>
+    <div class="input-hint">
+      <span class="hint-tag">Amazon Kindle URLs</span>
+      <span class="hint-tag">Goodreads book pages</span>
+      <span class="hint-tag">No login required</span>
+      <span class="hint-tag">Public data only</span>
+    </div>
+  </div>
+
+  <div class="error-state" id="errorState">
+    <p id="errorMsg">Something went wrong. Please try a valid Amazon or Goodreads URL.</p>
+  </div>
+</section>
+
+<!-- Loading -->
+<div class="loading-state" id="loadingState">
+  <div class="loading-steps">
+    <div class="step" id="step1">
+      <span class="step-icon">🔍</span>
+      <span>Fetching book metadata...</span>
+    </div>
+    <div class="step" id="step2">
+      <span class="step-icon">📚</span>
+      <span>Finding reader reviews...</span>
+    </div>
+    <div class="step" id="step3">
+      <span class="step-icon">🧠</span>
+      <span>Analyzing market signals...</span>
+    </div>
+    <div class="step" id="step4">
+      <span class="step-icon">💰</span>
+      <span>Estimating revenue potential...</span>
+    </div>
+    <div class="step" id="step5">
+      <span class="step-icon">✨</span>
+      <span>Generating your report...</span>
+    </div>
+  </div>
+</div>
+
+<!-- Results -->
+<section class="results-section" id="resultsSection">
+  <div class="results-header">
+    <div class="book-meta">
+      <h2 id="bookTitle">—</h2>
+      <div style="font-size:14px; color: var(--muted); margin-top:4px;" id="bookAuthor"></div>
+      <div class="book-meta-tags" id="bookTags"></div>
+    </div>
+    <div class="score-badge">
+      <div class="score-num" id="opportunityScore">—</div>
+      <div class="score-label">Opportunity<br>Score</div>
+    </div>
+  </div>
+
+  <div class="report-grid" id="reportGrid">
+    <!-- Injected by JS -->
+  </div>
+
+  <div class="cta-section">
+    <div class="cta-text">
+      <h3>Write the book the market is asking for.</h3>
+      <p>Unlock batch analysis, competitor comparisons, and series strategy.</p>
+    </div>
+    <button class="cta-btn">Start Free Trial →</button>
+  </div>
+</section>
+
+<div class="ornament">✦ ✦ ✦</div>
+
+<section class="how-section">
+  <div class="how-eyebrow">How it works</div>
+  <div class="how-grid">
+    <div class="how-item">
+      <div class="how-num">01</div>
+      <div class="how-title">Paste any book URL</div>
+      <div class="how-desc">Amazon or Goodreads. We search for publicly available reviews, ratings, and category data. No scraping, no logins.</div>
+    </div>
+    <div class="how-item">
+      <div class="how-num">02</div>
+      <div class="how-title">AI reads the signals</div>
+      <div class="how-desc">We analyze reader sentiment, identify what's working, and surface the gaps in the current market that your next book could fill.</div>
+    </div>
+    <div class="how-item">
+      <div class="how-num">03</div>
+      <div class="how-title">Write with confidence</div>
+      <div class="how-desc">Get a clear picture of reader demand, pricing benchmarks, and realistic revenue estimates before you write a single word.</div>
+    </div>
+  </div>
+</section>
+
+<script>
+const CLAUDE_API = "https://api.anthropic.com/v1/messages";
+
+async function runAnalysis() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) return;
+
+  const btn = document.getElementById('analyzeBtn');
+  const errorState = document.getElementById('errorState');
+
+  // Reset
+  errorState.classList.remove('active');
+  document.getElementById('resultsSection').classList.remove('active');
+  btn.disabled = true;
+  document.getElementById('btnText').textContent = 'Analyzing...';
+
+  // Show loading
+  const loadingState = document.getElementById('loadingState');
+  loadingState.classList.add('active');
+
+  try {
+    // Animate steps
+    const steps = ['step1','step2','step3','step4','step5'];
+    let stepIndex = 0;
+
+    const stepInterval = setInterval(() => {
+      if (stepIndex > 0) {
+        document.getElementById(steps[stepIndex-1]).classList.remove('active');
+        document.getElementById(steps[stepIndex-1]).classList.add('done');
+        document.getElementById(steps[stepIndex-1]).querySelector('.step-icon').textContent = '✓';
+      }
+      if (stepIndex < steps.length) {
+        document.getElementById(steps[stepIndex]).classList.add('active');
+        stepIndex++;
+      } else {
+        clearInterval(stepInterval);
+      }
+    }, 1800);
+
+    // Build the analysis prompt
+    const prompt = `You are BookLens, an AI market intelligence tool for self-published authors on Amazon KDP.
+
+The user has provided this book URL: ${url}
+
+Your task:
+1. Identify the book (title, author, genre/category) from the URL structure and your knowledge
+2. Analyze what you know about this book's market, readers, and competitive landscape
+3. Search your knowledge for reader sentiment patterns in this niche
+
+Respond ONLY with a valid JSON object (no markdown, no explanation) in exactly this structure:
+
+{
+  "title": "Book title",
+  "author": "Author name",
+  "category": "Main category (e.g. History, Science, Self-Help)",
+  "opportunityScore": 73,
+  "tags": ["Knowledge Books", "Amazon Kindle", "Non-fiction"],
+  "readerProfile": {
+    "headline": "One-line description of the target reader",
+    "primaryMotivation": "Why they buy this type of book",
+    "demographics": "Age range and background",
+    "readingContext": "When/where they read",
+    "keyInsight": "One sharp insight about this reader that most authors miss"
+  },
+  "positiveSignals": [
+    "What readers consistently praise about books in this niche",
+    "Another strength signal",
+    "A third signal"
+  ],
+  "negativeSignals": [
+    "Most common complaint about books in this niche",
+    "Another gap or frustration",
+    "A third weakness in current offerings"
+  ],
+  "marketOpportunity": {
+    "headline": "The single biggest untapped opportunity in this niche",
+    "gaps": [
+      "Specific gap 1 with detail",
+      "Specific gap 2 with detail",
+      "Specific gap 3 with detail"
+    ],
+    "yourEdge": "Specific advice for a new author entering this niche today"
+  },
+  "revenue": {
+    "monthlyLow": 180,
+    "monthlyHigh": 680,
+    "annualEstimate": "2,160 – 8,160",
+    "bsr_estimate": "Top 5,000–15,000 in category",
+    "priceRecommendation": "$4.99 – $6.99",
+    "kuStrategy": "Whether KU enrollment makes sense and why",
+    "confidenceNote": "Brief honest caveat about these estimates"
+  },
+  "nextBookIdea": "One concrete book concept this author should write next, based on market gaps"
+}
+
+Important: Make the insights specific and actionable, not generic. Base analysis on real patterns you know about this book's niche. Be honest about revenue — these are estimates, not guarantees.`;
+
+    const response = await fetch(CLAUDE_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    clearInterval(stepInterval);
+    // Mark all steps done
+    steps.forEach(s => {
+      document.getElementById(s).classList.remove('active');
+      document.getElementById(s).classList.add('done');
+      document.getElementById(s).querySelector('.step-icon').textContent = '✓';
+    });
+
+    await new Promise(r => setTimeout(r, 600));
+    loadingState.classList.remove('active');
+
+    if (!response.ok) throw new Error('API error');
+
+    const data = await response.json();
+    const rawText = data.content.map(c => c.text || '').join('');
+
+    let report;
+    try {
+      const clean = rawText.replace(/```json|```/g, '').trim();
+      report = JSON.parse(clean);
+    } catch(e) {
+      throw new Error('Could not parse response');
+    }
+
+    renderReport(report);
+
+  } catch(err) {
+    loadingState.classList.remove('active');
+    document.getElementById('errorMsg').textContent = 'Analysis failed. Please check the URL and try again.';
+    errorState.classList.add('active');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('btnText').textContent = 'Analyze';
+  }
+}
+
+function renderReport(r) {
+  // Header
+  document.getElementById('bookTitle').textContent = r.title || 'Unknown Title';
+  document.getElementById('bookAuthor').textContent = r.author ? `by ${r.author}` : '';
+  document.getElementById('opportunityScore').textContent = r.opportunityScore || '—';
+
+  const tagsEl = document.getElementById('bookTags');
+  tagsEl.innerHTML = '';
+  (r.tags || []).forEach((tag, i) => {
+    const el = document.createElement('span');
+    el.className = 'tag' + (i === 0 ? ' accent' : '');
+    el.textContent = tag;
+    tagsEl.appendChild(el);
+  });
+
+  const grid = document.getElementById('reportGrid');
+  grid.innerHTML = '';
+
+  // Card 1: Reader Profile
+  const rp = r.readerProfile || {};
+  grid.appendChild(makeCard({
+    icon: '📖', iconClass: 'icon-reader',
+    eyebrow: 'Reader Profile',
+    title: rp.headline || 'Your Ideal Reader',
+    delay: 0,
+    content: `
+      <ul class="insight-list">
+        <li class="insight-item"><span class="insight-bullet"></span><div><strong>Motivation:</strong> ${rp.primaryMotivation || '—'}</div></li>
+        <li class="insight-item"><span class="insight-bullet"></span><div><strong>Who they are:</strong> ${rp.demographics || '—'}</div></li>
+        <li class="insight-item"><span class="insight-bullet"></span><div><strong>Reading context:</strong> ${rp.readingContext || '—'}</div></li>
+        <li class="insight-item"><span class="insight-bullet gold"></span><div><strong>Key insight:</strong> ${rp.keyInsight || '—'}</div></li>
+      </ul>
+    `
+  }));
+
+  // Card 2: Market Signals
+  const pos = r.positiveSignals || [];
+  const neg = r.negativeSignals || [];
+  grid.appendChild(makeCard({
+    icon: '📡', iconClass: 'icon-signals',
+    eyebrow: 'Market Signals',
+    title: 'What readers love & what\'s missing',
+    delay: 1,
+    content: `
+      <div class="signals-grid">
+        ${pos.slice(0,3).map(s => `
+          <div class="signal-box pos">
+            <div class="signal-type">✓ Working</div>
+            <div class="signal-text">${s}</div>
+          </div>
+        `).join('')}
+        ${neg.slice(0,3).map(s => `
+          <div class="signal-box neg">
+            <div class="signal-type">✗ Gap</div>
+            <div class="signal-text">${s}</div>
+          </div>
+        `).join('')}
+      </div>
+    `
+  }));
+
+  // Card 3: Opportunity
+  const mo = r.marketOpportunity || {};
+  grid.appendChild(makeCard({
+    icon: '🎯', iconClass: 'icon-opportunity',
+    eyebrow: 'Market Opportunity',
+    title: mo.headline || 'Untapped Demand',
+    delay: 2,
+    content: `
+      <ul class="insight-list" style="margin-bottom:16px">
+        ${(mo.gaps || []).map(g => `
+          <li class="insight-item"><span class="insight-bullet green"></span><div>${g}</div></li>
+        `).join('')}
+      </ul>
+      <div style="padding:14px; background:var(--paper); border-radius:3px; font-size:13px; line-height:1.6;">
+        <strong>Your edge:</strong> ${mo.yourEdge || '—'}
+      </div>
+    `
+  }));
+
+  // Card 4: Revenue
+  const rev = r.revenue || {};
+  const fillPct = Math.min(90, Math.max(20, (rev.monthlyHigh || 300) / 10));
+  grid.appendChild(makeCard({
+    icon: '💰', iconClass: 'icon-revenue',
+    eyebrow: 'Revenue Potential',
+    title: 'Monthly earnings estimate',
+    delay: 3,
+    content: `
+      <div class="revenue-display">
+        <div class="revenue-range">$${rev.monthlyLow || '—'}–$${rev.monthlyHigh || '—'}</div>
+        <div class="revenue-period">per month / per title</div>
+        <div class="revenue-bar"><div class="revenue-fill" style="width:${fillPct}%"></div></div>
+      </div>
+      <div class="revenue-breakdown">
+        <div class="rev-item">
+          <div class="rev-item-label">Annual est.</div>
+          <div class="rev-item-value">$${rev.annualEstimate || '—'}</div>
+        </div>
+        <div class="rev-item">
+          <div class="rev-item-label">Price range</div>
+          <div class="rev-item-value">${rev.priceRecommendation || '—'}</div>
+        </div>
+        <div class="rev-item" style="grid-column:1/-1">
+          <div class="rev-item-label">KU Strategy</div>
+          <div style="font-size:13px; margin-top:2px">${rev.kuStrategy || '—'}</div>
+        </div>
+      </div>
+      <div style="margin-top:12px; font-size:12px; color:var(--muted); font-style:italic">${rev.confidenceNote || ''}</div>
+    `
+  }));
+
+  // Card 5: Next Book Idea - full width
+  if (r.nextBookIdea) {
+    grid.appendChild(makeCard({
+      icon: '✍️', iconClass: 'icon-gap',
+      eyebrow: 'Your Next Book',
+      title: 'What the market is waiting for',
+      delay: 4,
+      fullWidth: true,
+      content: `
+        <div style="font-size:16px; line-height:1.7; padding:16px; background:var(--paper); border-left:3px solid var(--accent); border-radius:0 3px 3px 0;">
+          ${r.nextBookIdea}
+        </div>
+      `
+    }));
+  }
+
+  // Show results
+  const resultsSection = document.getElementById('resultsSection');
+  resultsSection.classList.add('active');
+  resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function makeCard({ icon, iconClass, eyebrow, title, content, delay, fullWidth }) {
+  const card = document.createElement('div');
+  card.className = 'report-card' + (fullWidth ? ' full-width' : '');
+  card.style.animationDelay = `${delay * 0.1}s`;
+  card.innerHTML = `
+    <div class="card-eyebrow">
+      <span class="card-eyebrow-icon ${iconClass}">${icon}</span>
+      ${eyebrow}
+    </div>
+    <div class="card-title">${title}</div>
+    <div class="card-body">${content}</div>
+  `;
+  return card;
+}
+
+// Allow Enter key
+document.getElementById('urlInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runAnalysis();
+});
+</script>
+</body>
+</html>
