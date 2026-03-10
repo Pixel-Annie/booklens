@@ -104,3 +104,4 @@ Make insights specific and actionable, not generic. Be honest about revenue esti
     console.error('Error:', err);
     return res.status(500).json({ error: 'Analysis failed', detail: err.message });
   }
+}
