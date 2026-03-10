@@ -1,107 +1,61 @@
-module.exports = async function handler(req, res) {
-  // CORS
+const handler = async function(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { url } = req.body || {};
-  if (!url) return res.status(400).json({ error: 'URL required' });
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'GEMINI_API_KEY not set in environment variables' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-  const prompt = `You are BookLens, an AI market intelligence tool for self-published authors on Amazon KDP.
+  var body = req.body || {};
+  var url = body.url;
 
-The user has provided this book URL: ${url}
+  if (!url) {
+    return res.status(400).json({ error: 'URL required' });
+  }
 
-Your task:
-1. Identify the book (title, author, genre/category) from the URL and your knowledge
-2. Analyze the market, readers, and competitive landscape for this book's niche
-3. Provide actionable intelligence based on real patterns in this category
+  var apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'GEMINI_API_KEY not configured' });
+  }
 
-Respond ONLY with a valid JSON object (no markdown, no explanation) in exactly this structure:
-
-{
-  "title": "Book title",
-  "author": "Author name",
-  "category": "Main category",
-  "opportunityScore": 73,
-  "tags": ["Knowledge Books", "Amazon Kindle", "Non-fiction"],
-  "readerProfile": {
-    "headline": "One-line description of the target reader",
-    "primaryMotivation": "Why they buy this type of book",
-    "demographics": "Age range and background",
-    "readingContext": "When/where they read",
-    "keyInsight": "One sharp insight about this reader that most authors miss"
-  },
-  "positiveSignals": [
-    "What readers consistently praise about books in this niche",
-    "Another strength signal",
-    "A third signal"
-  ],
-  "negativeSignals": [
-    "Most common complaint about books in this niche",
-    "Another gap or frustration",
-    "A third weakness in current offerings"
-  ],
-  "marketOpportunity": {
-    "headline": "The single biggest untapped opportunity in this niche",
-    "gaps": [
-      "Specific gap 1 with detail",
-      "Specific gap 2 with detail",
-      "Specific gap 3 with detail"
-    ],
-    "yourEdge": "Specific advice for a new author entering this niche today"
-  },
-  "revenue": {
-    "monthlyLow": 180,
-    "monthlyHigh": 680,
-    "annualEstimate": "2,160 – 8,160",
-    "bsr_estimate": "Top 5,000–15,000 in category",
-    "priceRecommendation": "$4.99 – $6.99",
-    "kuStrategy": "Whether KU enrollment makes sense and why",
-    "confidenceNote": "Brief honest caveat about these estimates"
-  },
-  "nextBookIdea": "One concrete book concept this author should write next, based on market gaps"
-}
-
-Make insights specific and actionable, not generic. Be honest about revenue estimates.`;
+  var prompt = 'You are BookLens, an AI market intelligence tool for KDP authors. The user provided this book URL: ' + url + '. Analyze the market for this book niche. Respond ONLY with valid JSON (no markdown) in this exact structure: {"title":"Book title","author":"Author name","category":"Main category","opportunityScore":73,"tags":["tag1","tag2","tag3"],"readerProfile":{"headline":"One-line reader description","primaryMotivation":"Why they buy","demographics":"Age and background","readingContext":"When/where they read","keyInsight":"Key insight about this reader"},"positiveSignals":["Signal 1","Signal 2","Signal 3"],"negativeSignals":["Gap 1","Gap 2","Gap 3"],"marketOpportunity":{"headline":"Biggest opportunity","gaps":["Gap detail 1","Gap detail 2","Gap detail 3"],"yourEdge":"Advice for new author"},"revenue":{"monthlyLow":180,"monthlyHigh":680,"annualEstimate":"2160-8160","bsr_estimate":"Top 5000-15000","priceRecommendation":"$4.99-$6.99","kuStrategy":"KU advice","confidenceNote":"Caveat"},"nextBookIdea":"Concrete next book idea"}';
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    var response = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1500,
-          }
+          generationConfig: { temperature: 0.7, maxOutputTokens: 1500 }
         })
       }
     );
 
     if (!response.ok) {
-      const err = await response.text();
-      console.error('Gemini error:', err);
-      return res.status(500).json({ error: `Gemini error ${response.status}`, detail: err });
+      var errText = await response.text();
+      return res.status(500).json({ error: 'Gemini error ' + response.status, detail: errText });
     }
 
-    const data = await response.json();
-    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    var data = await response.json();
+    var rawText = '';
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+      rawText = data.candidates[0].content.parts[0].text || '';
+    }
 
-    // Strip markdown fences if present
-    const clean = rawText.replace(/```json|```/g, '').trim();
-    const report = JSON.parse(clean);
-
+    var clean = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+    var report = JSON.parse(clean);
     return res.status(200).json(report);
 
   } catch (err) {
-    console.error('Error:', err);
     return res.status(500).json({ error: 'Analysis failed', detail: err.message });
   }
-}
+};
+
+module.exports = handler;
