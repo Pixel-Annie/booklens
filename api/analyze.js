@@ -6,11 +6,11 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { url } = req.body;
+  const { url } = req.body || {};
   if (!url) return res.status(400).json({ error: 'URL required' });
 
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
+  if (!apiKey) return res.status(500).json({ error: 'GEMINI_API_KEY not set in environment variables' });
 
   const prompt = `You are BookLens, an AI market intelligence tool for self-published authors on Amazon KDP.
 
@@ -88,7 +88,7 @@ Make insights specific and actionable, not generic. Be honest about revenue esti
     if (!response.ok) {
       const err = await response.text();
       console.error('Gemini error:', err);
-      return res.status(500).json({ error: 'Gemini API error' });
+      return res.status(500).json({ error: `Gemini error ${response.status}`, detail: err });
     }
 
     const data = await response.json();
@@ -104,4 +104,3 @@ Make insights specific and actionable, not generic. Be honest about revenue esti
     console.error('Error:', err);
     return res.status(500).json({ error: 'Analysis failed', detail: err.message });
   }
-}
